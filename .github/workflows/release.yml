@@ -37,6 +37,7 @@ jobs:
           set -euo pipefail
           VERSION=$(echo ${{ inputs.version }} | tr -d 'v')
           IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY}"
+          (cd doko-frontend; npm ci)
           (cd doko-frontend; npm run build)  
           (cd doko-backend; mvn versions:set -DnewVersion=$VERSION)
           (cd doko-backend; mvn -Pnative spring-boot:build-image)

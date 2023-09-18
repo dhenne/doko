@@ -1,0 +1,26 @@
+# bump version
+name: Bump version
+on:
+  push:
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: '0'
+      - id: github-tag
+        name: Bump version and push tag
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+    outputs:
+      version: ${{ steps.github-tag.outputs.new_tag }}
+  call-release-workflow:
+    uses: dhenne/doko/.github/workflows/release.yml@main
+    needs: bump
+    with:
+      version: ${{ needs.bump.outputs.version }}

@@ -145,7 +145,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>ghcr.io/dhenne/doko</name>
+                        <name>ghcr.io/dhenne/doko:${project.version}</name>
                         <builder>paketobuildpacks/builder:tiny</builder>
                         <buildpacks>
                             <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>

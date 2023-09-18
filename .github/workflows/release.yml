@@ -31,6 +31,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.20.2
+      - uses: imjasonh/setup-crane@v0.1
       - id: package
         run: |
           #!/usr/bin/env bash

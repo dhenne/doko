@@ -1,0 +1,23 @@
+http:
+  routers:
+    doko-backend:
+      entryPoints:
+        - web
+      service: service-doko-backend
+      rule: Host(`doko.localhost`) && PathPrefix(`/api/`)
+    doko-frontend:
+      entryPoints:
+        - web
+      service: service-doko-frontend
+      rule: Host(`doko.localhost`) && !PathPrefix(`/api/`)
+  services:
+    service-doko-backend:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:8080
+        passHostHeader: false
+    service-doko-frontend:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:5173
+        passHostHeader: false

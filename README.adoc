@@ -1,0 +1,27 @@
+= Doko app
+
+Simple Webapplikation to record "Doppelkopf" games and share the scoreboard online while playing.
+
+== developer quickstart
+
+[source,lang=bash]
+----
+docker-compose up -d
+( cd doko-frontend ; npm run dev -- --host &)
+( cd doko-backend ; mvn spring-boot:run )
+chromium http://doko.localhost/ &
+----
+
+== build artifact
+
+[source,lang=bash]
+----
+( cd doko-frontend ; npm run build )
+( cd doko-backend ; mvn -Pnative spring-boot:build-image )
+----
+
+== deploy
+
+=== fly.io
+
+

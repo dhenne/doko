@@ -149,7 +149,6 @@
                         <name>ghcr.io/dhenne/doko:${project.version}</name>
                         <builder>paketobuildpacks/builder:tiny</builder>
                         <publish>${publish}</publish>
-                        <buildCache>ghcr.io/dhenne/doko-buildache</buildCache>
                         <buildpacks>
                             <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>
                             <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>

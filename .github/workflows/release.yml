@@ -41,7 +41,7 @@ jobs:
           (cd doko-frontend; npm ci)
           (cd doko-frontend; npm run build)  
           (cd doko-backend; mvn versions:set -DnewVersion=$VERSION)
-          (cd doko-backend; mvn -Pnative spring-boot:build-image)
+          (cd doko-backend; mvn -Pnative -Dpublish spring-boot:build-image)
           DIGEST="$(crane digest ${IMAGE_NAME}:${VERSION})"
           echo "::set-output name=id::${IMAGE_NAME}"
           echo "::set-output name=version::$VERSION"

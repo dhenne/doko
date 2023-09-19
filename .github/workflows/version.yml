@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-permissions:
-  contents: read
-  packages: write
 jobs:
   bump:
     runs-on: ubuntu-latest

@@ -29,3 +29,6 @@ jobs:
     needs: bump
     with:
       version: ${{ needs.bump.outputs.version }}
+    secrets:
+      username: ${{ secrets.OCI_REGISTRY_USER }}
+      password: ${{ secrets.OCI_REGISTRY_PASS }}

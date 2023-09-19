@@ -7,6 +7,9 @@ on:
 jobs:
   bump:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4

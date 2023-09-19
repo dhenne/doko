@@ -7,7 +7,7 @@ app = "doko"
 primary_region = "ams"
 
 [build]
-  image = "docker.io/library/doko-backend:0.0.1-SNAPSHOT"
+  image = "ghcr.io/dhenne/doko:0.10.0"
 
 [http_service]
   internal_port = 8080

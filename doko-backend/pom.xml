@@ -16,6 +16,10 @@
     <properties>
         <java.version>20</java.version>
         <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
+        <publish.enabled>false</publish.enabled>
+        <publish.username>${env.MAVEN_PUBLISH_USERNAME}</publish.username>
+        <publish.password>${env.MAVEN_PUBLISH_PASSWORD}</publish.password>
+        <publish.url>https://ghcr.io</publish.url>
     </properties>
     <dependencies>
         <dependency>
@@ -145,8 +149,9 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>${project.name}</name>
+                        <name>ghcr.io/dhenne/doko:${project.version}</name>
                         <builder>paketobuildpacks/builder:tiny</builder>
+                        <publish>${publish.enabled}</publish>
                         <buildpacks>
                             <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>
                             <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>
@@ -154,8 +159,16 @@
                         <env>
                             <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
                             <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+                            <BP_OCI_SOURCE>https://github.com/dhenne/doko</BP_OCI_SOURCE>
                         </env>
                     </image>
+                    <docker>
+                        <publishRegistry>
+                            <username>${publish.username}</username>
+                            <password>${publish.password}</password>
+                            <url>${publish.url}</url>
+                        </publishRegistry>
+                    </docker>
                 </configuration>
             </plugin>
         </plugins>

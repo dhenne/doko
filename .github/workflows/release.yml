@@ -1,0 +1,68 @@
+name: Release
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'A version to be released'
+        required: true
+        type: string
+    secrets:
+      OCI_REGISTRY_USER:
+        description: 'oci registry username'
+        required: true
+      OCI_REGISTRY_PASS:
+        description: 'oci registry password'
+        required: true
+
+jobs:
+  publish:
+    name: Package, Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - id: checkout
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - id: setup-java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '20'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.20.2
+      - uses: imjasonh/setup-crane@v0.1
+      - id: package
+        run: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+          VERSION=$(echo ${{ inputs.version }} | tr -d 'v')
+          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY}"
+          (cd doko-frontend; npm ci)
+          (cd doko-frontend; npm run build)  
+          (cd doko-backend; mvn versions:set -DnewVersion=$VERSION)
+          (cd doko-backend; mvn -Pnative -Dpublish.enabled spring-boot:build-image)
+          DIGEST="$(crane digest ${IMAGE_NAME}:${VERSION})"
+          echo "::set-output name=id::${IMAGE_NAME}"
+          echo "::set-output name=version::$VERSION"
+          echo "::set-output name=digest::${IMAGE_NAME}@${DIGEST}"
+        shell: bash
+        env:
+          MAVEN_PUBLISH_USERNAME: ${{ secrets.OCI_REGISTRY_USER }}
+          MAVEN_PUBLISH_PASSWORD: ${{ secrets.OCI_REGISTRY_PASS }}
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.package.outputs.version }}
+          release_name: ${{ steps.package.outputs.version }}
+          body: |
+            Image url: ${{ steps.package.outputs.id }}:${{ steps.package.outputs.version }}
+            Released with digest: ${{ steps.package.outputs.digest }}
+          draft: false
+          prerelease: false
+
+    outputs:
+      version: ${{ steps.package.outputs.version }}

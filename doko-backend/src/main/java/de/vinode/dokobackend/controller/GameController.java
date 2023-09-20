@@ -48,7 +48,7 @@ public class GameController {
     }
 
     @GetMapping("/{shareId}")
-    public ResponseEntity<GameDto> getGame(@PathVariable String shareId) {
+    public ResponseEntity<GameDto> getGame(@PathVariable("shareId") String shareId) {
 
         var game = gameService.retrieveGameByShareId(shareId);
         var dto = gameMapper.gameToDto(game);
@@ -57,7 +57,7 @@ public class GameController {
     }
 
     @PostMapping(value = "/{shareId}/round", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> postRound(@PathVariable String shareId, @RequestBody RoundDto roundDto) {
+    public ResponseEntity<Void> postRound(@PathVariable("shareId") String shareId, @RequestBody RoundDto roundDto) {
 
         var round = roundService.pushRound(shareId, roundMapper.postDtoToModel(roundDto));
 

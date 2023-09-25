@@ -1,5 +1,43 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+
+	let nrOfPlayerInputFields: number = 4;
+	let playerNameChangeHandlers: Array<any> = [];
+	let playerNameLengths: Array<number> = [];
+	let isOnlyValidPlayersPresent = false;
+
+	const addPlayerNameChangeHandler = (index: number) => {
+		playerNameLengths.push(0);
+		updateOnlyValidPlayersPresent();
+		return (e: any) => {
+			playerNameLengths[index] = e.target!.value.length;
+			updateOnlyValidPlayersPresent();
+		};
+	};
+
+	const removePlayerNamesChangeHandler = () => {
+		playerNameChangeHandlers.pop();
+		playerNameLengths.pop();
+		nrOfPlayerInputFields -= 1;
+		updateOnlyValidPlayersPresent();
+	};
+
+	onMount(() => {
+		for (let ix = 0; ix < nrOfPlayerInputFields; ix++) {
+			playerNameChangeHandlers.push(addPlayerNameChangeHandler(ix));
+		}
+	});
+
+	const increment = () => {
+		playerNameChangeHandlers.push(addPlayerNameChangeHandler(nrOfPlayerInputFields++));
+	};
+
+	const decrement = removePlayerNamesChangeHandler;
+
+	const updateOnlyValidPlayersPresent = () => {
+		isOnlyValidPlayersPresent = playerNameLengths.every((length) => length !== 0);
+	};
 
 	async function handleSubmit(event: Event) {
 		const formElement = event.target as HTMLFormElement;
@@ -15,34 +53,27 @@
 
 		await goto(`/?shareid=${game.shareId}`);
 	}
-
-	let nrOfPlayers: number = 4;
-
-	const increment = () => {
-		nrOfPlayers += 1;
-	};
-
-	const decrement = () => {
-		nrOfPlayers -= 1;
-	};
 </script>
 
 <form method="POST" on:submit|preventDefault={handleSubmit} action="/api/v1/game">
-	{#each Array(nrOfPlayers) as _, index (index)}
+	{#each Array(nrOfPlayerInputFields) as _, index (index)}
 		<div>
 			<label>
 				Spieler {index + 1}
-				<input name="playerNames[{index}]" type="text" />
+				<input name="playerNames[{index}]" type="text" on:input={playerNameChangeHandlers[index]} />
 			</label>
 		</div>
 	{/each}
 	<div>
 		<button type="button" class="btn btn-secondary" on:click={increment}>+</button>
-		<button type="button" class="btn btn-secondary" on:click={decrement} disabled={nrOfPlayers <= 4}
-			>-</button
+		<button
+			type="button"
+			class="btn btn-secondary"
+			on:click={decrement}
+			disabled={nrOfPlayerInputFields <= 4}>-</button
 		>
 	</div>
 	<div>
-		<button>Start game</button>
+		<button disabled={!isOnlyValidPlayersPresent}>Start game</button>
 	</div>
 </form>

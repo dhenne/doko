@@ -73,17 +73,21 @@
 			return 0;
 		}
 
+		const isReWinner = value > 120;
+		const winnerPoints = (isReWinner ? 1 : 2);
 		const absoluteValue = Math.abs(value - 120);
-		const additionalValue = Math.floor(absoluteValue / 30);
+		const absagePoints = Math.max(
+			0,
+			Math.floor(absoluteValue / 30) - (absoluteValue % 30 == 0 ? 1 : 0));
 
-		let returnPoints = additionalValue + (value > 120 ? 1 : 2);
+		let returnPoints = absagePoints + winnerPoints;
 
 		switch (reOrContra) {
 			case 'RE': {
-				return returnPoints * (value > 120 ? 1 : -1);
+				return returnPoints * (isReWinner ? 1 : -1);
 			}
 			case 'CONTRA': {
-				return returnPoints * (value > 120 ? -1 : 1);
+				return returnPoints * (isReWinner ? -1 : 1);
 			}
 			default: {
 				return 0;

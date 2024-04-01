@@ -12,8 +12,13 @@
 
 	type PlayerPartySliderChangeHandler = (event: any) => void;
 	type PlayerPartySliderChangeHandlers = { [key: string]: PlayerPartySliderChangeHandler };
-
 	let handlePlayerPartySliderChangers: PlayerPartySliderChangeHandlers = {};
+
+	type ChangedPlayerCardValueHandler = (
+		event: Event & { currentTarget: EventTarget & HTMLInputElement }
+	) => void;
+	type ChangedPlayerCardValueHandlers = { [key: string]: ChangedPlayerCardValueHandler };
+	let handleChangedPlayerCardValue: ChangedPlayerCardValueHandlers = {};
 
 	let regularValue: Array<number> = [120];
 	let specialPointsRe: Array<number> = [0];
@@ -23,6 +28,7 @@
 
 	let playerReOrContra: PlayerReOrContra = {};
 
+	const cardValueOfPlayerParty: Points = {};
 	const points: Points = {};
 
 	const dispatch = createEventDispatcher();
@@ -31,6 +37,24 @@
 		game.players.forEach((player) => {
 			handlePlayerPartySliderChangers[player.name] = (e: CustomEvent) => {
 				playerReOrContra[player.name] = mapToReOrContra(e.detail.value);
+			};
+			handleChangedPlayerCardValue[player.name] = (
+				event: Event & { currentTarget: EventTarget & HTMLInputElement }
+			) => {
+				
+				const value = parseInt(event.currentTarget.value)
+				console.log(`changed value to: ${value}`)
+				switch (playerReOrContra[player.name]) {
+					case 'RE': {
+						regularValue[0] = value;
+						break;
+					}
+					case 'CONTRA': {
+						regularValue[0] = 240 - value;
+						break;
+					}
+				}
+				updatePoints();
 			};
 		});
 	});
@@ -61,7 +85,7 @@
 	};
 
 	const handleAddRound = async () => {
-		const responese : Response = await postNewRoundForGame(shareId, points);
+		const responese: Response = await postNewRoundForGame(shareId, points);
 		if (responese.status === 201) {
 			dispatch('roundAdded', points);
 		}
@@ -74,11 +98,12 @@
 		}
 
 		const isReWinner = value > 120;
-		const winnerPoints = (isReWinner ? 1 : 2);
+		const winnerPoints = isReWinner ? 1 : 2;
 		const absoluteValue = Math.abs(value - 120);
 		const absagePoints = Math.max(
 			0,
-			Math.floor(absoluteValue / 30) - (absoluteValue % 30 == 0 ? 1 : 0));
+			Math.floor(absoluteValue / 30) - (absoluteValue % 30 == 0 ? 1 : 0)
+		);
 
 		let returnPoints = absagePoints + winnerPoints;
 
@@ -88,6 +113,25 @@
 			}
 			case 'CONTRA': {
 				return returnPoints * (isReWinner ? -1 : 1);
+			}
+			default: {
+				return 0;
+			}
+		}
+	};
+
+	const calculateValueForParty = (value: number | undefined, reOrContra: ReOrContra) => {
+		if (value === undefined) {
+			console.log('no value given to calculate points from');
+			return 0;
+		}
+
+		switch (reOrContra) {
+			case 'RE': {
+				return value;
+			}
+			case 'CONTRA': {
+				return 240 - value;
 			}
 			default: {
 				return 0;
@@ -127,6 +171,7 @@
 							: specialPointsContra.at(0)! - specialPointsRe.at(0)!;
 
 					points[player.name] = calculatePointsFromValue(regularValue.at(0), party) + specialPoints;
+					cardValueOfPlayerParty[player.name] = calculateValueForParty(regularValue.at(0), party);
 				});
 		});
 
@@ -168,6 +213,18 @@
 				</div>
 				{#if points[player.name] !== undefined}
 					<div class="playerPartyContainerElement pointDisplay">
+						<input class="playerCardsValueInput"
+							type="number"
+							bind:value={cardValueOfPlayerParty[player.name]}
+							on:change={handleChangedPlayerCardValue[player.name]}
+							min="0"
+							max="240"
+						/>
+					</div>
+					<div class="playerPartyContainerElement pointDisplay">
+						<p>points:</p>
+					</div>
+					<div class="playerPartyContainerElement pointDisplay">
 						<p>{points[player.name]}</p>
 					</div>
 				{/if}
@@ -176,7 +233,7 @@
 	</div>
 	<div>
 		<p>card value re</p>
-		<RangeSlider bind:values={regularValue} {...pointSliderProps} on:stop={updatePoints} />
+		<RangeSlider bind:values={regularValue} {...pointSliderProps} on:change={updatePoints} />
 	</div>
 	<div>
 		<p>special points re</p>
@@ -205,7 +262,7 @@
 
 <style scoped>
 	.playerSlider {
-		width: 200px;
+		width: 100px;
 	}
 
 	.playerPartyContainerElement {
@@ -224,5 +281,9 @@
 
 	.full-width-btn {
 		width: 100%;
+	}
+
+	.playerCardsValueInput {
+		max-width: 6ch;
 	}
 </style>

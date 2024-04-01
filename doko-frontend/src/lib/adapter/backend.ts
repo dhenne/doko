@@ -4,7 +4,7 @@ export type Points = { [key: string]: number };
 
 export const mapToRound = (points: Points): Round => {
     return {
-        roundPlayerResultList: Object.keys(points).map(k => { return { name: k, points: points[k] } })
+        roundPlayerResultList: Object.keys(points).map(k => { return { name: k, points: points[k]} })
     };
 };
 
@@ -24,4 +24,8 @@ export const postNewRoundForGame = (gameShareId: string, points: Points) => {
         headers,
         body
     } as RequestInit);
+};
+
+export const removeRound = (gameShareId: string, round : Round) => {
+    const url = `/api/v1/game/${gameShareId}/round`;
 };

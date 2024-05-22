@@ -41,9 +41,8 @@
 			handleChangedPlayerCardValue[player.name] = (
 				event: Event & { currentTarget: EventTarget & HTMLInputElement }
 			) => {
-				
-				const value = parseInt(event.currentTarget.value)
-				console.log(`changed value to: ${value}`)
+				const value = parseInt(event.currentTarget.value);
+				console.log(`changed value to: ${value}`);
 				switch (playerReOrContra[player.name]) {
 					case 'RE': {
 						regularValue[0] = value;
@@ -87,7 +86,8 @@
 	const handleAddRound = async () => {
 		const responese: Response = await postNewRoundForGame(shareId, points);
 		if (responese.status === 201) {
-			dispatch('roundAdded', points);
+			const locationUrl = responese.headers.get("Location");
+			dispatch('roundAdded', locationUrl);
 		}
 	};
 
@@ -213,7 +213,8 @@
 				</div>
 				{#if points[player.name] !== undefined}
 					<div class="playerPartyContainerElement pointDisplay">
-						<input class="playerCardsValueInput"
+						<input
+							class="playerCardsValueInput"
 							type="number"
 							bind:value={cardValueOfPlayerParty[player.name]}
 							on:change={handleChangedPlayerCardValue[player.name]}
@@ -284,6 +285,6 @@
 	}
 
 	.playerCardsValueInput {
-		max-width: 6ch;
+		width: fit-content;
 	}
 </style>

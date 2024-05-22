@@ -1,8 +1,13 @@
 <script lang="ts">
 	import type { Game } from '$lib/domain/game';
-	import AddRoundMenu  from './addRoundMenu.svelte';
+	import AddRoundMenu from './addRoundMenu.svelte';
 	import type { Points } from '$lib/adapter/backend';
 	import { onMount, createEventDispatcher } from 'svelte';
+	import { SpeedDial, SpeedDialButton } from 'flowbite-svelte';
+	import {
+		CirclePlusSolid,
+		CloseCircleSolid
+	} from 'flowbite-svelte-icons';
 
 	export let game: Game;
 	export let shareId: string;
@@ -15,23 +20,29 @@
 		isAddRoundMenuDisplayed = !isAddRoundMenuDisplayed;
 	};
 
-	const handleRoundAdded = (e : CustomEvent<Points>) => {
+	const handleRoundAdded = (e: CustomEvent<string>) => {
 		toggleAddRoundMenu();
-		dispatch("roundAdded", e.detail)
+		dispatch('roundAdded', e.detail);
+	};
+
+	const handleDeleteRound = () => {
+		dispatch('roundDeleted');
 	};
 </script>
 
 <main>
 	{#if isAddRoundMenuDisplayed}
-	  <AddRoundMenu { game }  { shareId } on:roundAdded={handleRoundAdded}></AddRoundMenu>
+		<AddRoundMenu {game} {shareId} on:roundAdded={handleRoundAdded}></AddRoundMenu>
 	{:else}
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col">
-					<button class="btn btn-primary full-width-btn" on:click={toggleAddRoundMenu}>+</button>
-				</div>
-			</div>
-		</div>
+		<SpeedDial defaultClass="absolute end-6 bottom-6" pill={false} tooltip="none" textOutside>
+			<SpeedDialButton name="delete" on:click={handleDeleteRound}>
+				<CloseCircleSolid class="h-6 w-6" />
+			</SpeedDialButton>
+			<SpeedDialButton name="add" on:click={toggleAddRoundMenu}>
+				<CirclePlusSolid class="h-6 w-6" />
+			</SpeedDialButton>
+			
+		</SpeedDial>
 	{/if}
 </main>
 

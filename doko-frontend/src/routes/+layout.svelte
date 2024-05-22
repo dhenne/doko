@@ -1,7 +1,11 @@
+<script>
+	import '../app.pcss';
+</script>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a href="/">Home</a>
-    <a href="/about">About</a>
-    <a href="/settings">Settings</a>
+	<a href="/">Home</a>
+	<a href="/about">About</a>
+	<a href="/settings">Settings</a>
 </nav>
 
-<slot></slot>
+<slot />

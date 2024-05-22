@@ -28,7 +28,7 @@ public class GameEntity {
     private Set<PlayerEntity> playerEntities;
 
     @OrderBy("order")
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<RoundEntity> roundEntities;

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,5 +61,22 @@ public class RoundService {
                 .player(playerEntities.stream().filter(playerEntity -> playerEntity.getName().equals(roundPlayerResult.name())).findFirst().orElseThrow())
                 .points(roundPlayerResult.points())
                 .build();
+    }
+
+    public void deleteRound(String shareId, UUID roundId) {
+        var gameEntity = gameEntityRepository.getByShareId(shareId);
+
+        gameEntity.getRoundEntities()
+                .removeIf(roundEntity -> roundEntity.getId().equals(roundId));
+
+        gameEntityRepository.save(gameEntity);
+    }
+
+    public Round getRoundById(String shareId, UUID roundId) {
+        return roundEntityRepository
+                .findById(roundId)
+                .filter(roundEntity -> roundEntity.getGameEntity().getShareId().equals(shareId))
+                .map(roundMapper::entityToModel)
+                .orElseThrow();
     }
 }

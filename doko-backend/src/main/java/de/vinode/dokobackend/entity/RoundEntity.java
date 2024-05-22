@@ -19,13 +19,13 @@ public class RoundEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private GameEntity gameEntity;
 
     @Column(name = "roundOrder")
     private Long order;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<RoundPlayerResultEntity> roundPlayerResultEntities;

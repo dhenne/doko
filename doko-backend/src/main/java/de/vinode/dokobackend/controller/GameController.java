@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = GameController.URL_PATH)
@@ -47,6 +48,15 @@ public class GameController {
                 .body(createdGame);
     }
 
+    @GetMapping("/{shareId}/round/{roundId}")
+    public ResponseEntity<RoundDto> getRound(@PathVariable("shareId") String shareId, @PathVariable("roundId") UUID roundId) {
+
+        var round = roundService.getRoundById(shareId, roundId);
+        var dto = roundMapper.ModelToDto(round);
+
+        return ResponseEntity.ok(dto);
+    }
+
     @GetMapping("/{shareId}")
     public ResponseEntity<GameDto> getGame(@PathVariable("shareId") String shareId) {
 
@@ -64,8 +74,17 @@ public class GameController {
         return ResponseEntity
                 .created(
                         URI.create(
-                                String.format("/api/v1/game/%s/round/%s", shareId, round.order())))
+                                String.format("/api/v1/game/%s/round/%s", shareId, round.id())))
                 .build();
+
+    }
+
+    @DeleteMapping(value = "/{shareId}/round/{roundId}")
+    public ResponseEntity<Void> deleteRound(@PathVariable("shareId") String shareId, @PathVariable("roundId") UUID roundId) {
+
+        roundService.deleteRound(shareId, roundId);
+
+        return ResponseEntity.ok().build();
 
     }
 }

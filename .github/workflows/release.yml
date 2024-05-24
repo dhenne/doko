@@ -30,7 +30,7 @@ jobs:
           java-version: '20'
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.20.2
+          node-version: 22.2.0
       - uses: imjasonh/setup-crane@v0.1
       - id: package
         run: |

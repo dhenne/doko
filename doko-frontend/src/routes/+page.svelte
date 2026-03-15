@@ -8,8 +8,8 @@
 	import { Alert } from 'flowbite-svelte';
 	import type { Round } from '$lib/domain/round'
 
-	let game: Game;
-	let shareId : string | null = null;
+	let game: Game | undefined = $state(undefined);
+	let shareId : string | null = $state(null);
 
 	onMount(async () => {
 		const paramsShareId = $page.url.searchParams.get('shareid');
@@ -17,30 +17,28 @@
             game = await loadGame(paramsShareId);
         }
         shareId = paramsShareId;
+		console.log('Loaded game:', game);
 	});
 
-	const handleRoundAdded = async (e: CustomEvent<string>) => {
+	const onRoundAdded = async (roundUrl: string) => {
+		if (game === undefined) {
+			return;
+		}
 
-		const addedRound : Round = await getRoundByUrl(e.detail);
+		const addedRound : Round = await getRoundByUrl(roundUrl);
 
-		game.rounds.push(addedRound);
-
-		const ix = game.rounds.length;
-		game.rounds[ix] = game.rounds[ix]; // make write visible for compiler
+		game = { ...game, rounds: [...game.rounds, addedRound] };
 	};
 
-	const handleRoundDeleted = async () => {
-		const lastRound = game.rounds.at(-1);
+	const onRoundDeleted = async () => {
+		const lastRound = game?.rounds.at(-1);
 		if (shareId === null || lastRound === undefined) {
 			return
 		}
-		
-		const response = await deleteRound(shareId, lastRound);
-		if (response.status === 200) {
-			game.rounds.pop();
 
-			const ix = game.rounds.length;
-		    game.rounds[ix] = game.rounds[ix]; // make write visible for compiler
+		const response = await deleteRound(shareId, lastRound);
+		if (response.status === 200 && game !== undefined) {
+			game = { ...game, rounds: game.rounds.slice(0, -1) };
 		}
 	};
 
@@ -56,7 +54,7 @@
 <main>
 	{#if shareId !== null && game !== undefined}
 		<GameScreen bind:game />
-		<RoundAddButton bind:game {shareId} on:roundAdded={handleRoundAdded} on:roundDeleted={handleRoundDeleted}/>
+		<RoundAddButton bind:game {shareId} {onRoundAdded} {onRoundDeleted}/>
 	{:else}
 		<a class="btn btn-primary" href="/game/create">Create new game</a>
 	{/if}

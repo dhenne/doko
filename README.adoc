@@ -7,7 +7,7 @@ Simple Webapplikation to record "Doppelkopf" games and share the scoreboard onli
 [source,lang=bash]
 ----
 docker-compose up -d
-( cd doko-frontend ; npm run dev -- --host &)
+( cd doko-frontend ; pnpm run dev -- --host &)
 ( cd doko-backend ; mvn spring-boot:run )
 chromium http://doko.localhost/ &
 ----

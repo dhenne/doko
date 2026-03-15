@@ -35,6 +35,7 @@
 
 	onMount(() => {
 		game.players.forEach((player) => {
+			playerReOrContra[player.name] = 'PAUSE';
 			handlePlayerPartySliderChangers[player.name] = (e: CustomEvent) => {
 				playerReOrContra[player.name] = mapToReOrContra(e.detail.value);
 			};

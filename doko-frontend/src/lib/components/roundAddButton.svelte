@@ -2,53 +2,42 @@
 	import type { Game } from '$lib/domain/game';
 	import AddRoundMenu from './addRoundMenu.svelte';
 	import type { Points } from '$lib/adapter/backend';
-	import { onMount, createEventDispatcher } from 'svelte';
-	import { SpeedDial, SpeedDialButton } from 'flowbite-svelte';
-	import {
-		CirclePlusSolid,
-		CloseCircleSolid
-	} from 'flowbite-svelte-icons';
+	import { createEventDispatcher } from 'svelte';
+	import { SpeedDialTrigger, SpeedDial, SpeedDialButton } from 'flowbite-svelte';
+	import { CirclePlusSolid, CloseCircleSolid } from 'flowbite-svelte-icons';
 
-	export let game: Game;
-	export let shareId: string;
+	let { onRoundAdded, onRoundDeleted, game = $bindable() , shareId} = $props();
 
-	const dispatch = createEventDispatcher();
-
-	let isAddRoundMenuDisplayed: Boolean = false;
+	let isAddRoundMenuDisplayed: boolean = $state(false);
 
 	const toggleAddRoundMenu = () => {
 		isAddRoundMenuDisplayed = !isAddRoundMenuDisplayed;
+		console.log('isAddRoundMenuDisplayed:', isAddRoundMenuDisplayed);
 	};
 
-	const handleRoundAdded = (e: CustomEvent<string>) => {
+	const handleRoundAddedAndToggleMenu = (e: CustomEvent<string>) => {
 		toggleAddRoundMenu();
-		dispatch('roundAdded', e.detail);
+		onRoundAdded(e.detail);
 	};
 
-	const handleDeleteRound = () => {
-		dispatch('roundDeleted');
-	};
+	
 </script>
 
-<main>
-	{#if isAddRoundMenuDisplayed}
-		<AddRoundMenu {game} {shareId} on:roundAdded={handleRoundAdded}></AddRoundMenu>
-	{:else}
-		<SpeedDial defaultClass="absolute end-6 bottom-6" pill={false} tooltip="none" textOutside>
-			<SpeedDialButton name="delete" on:click={handleDeleteRound}>
+{#if isAddRoundMenuDisplayed}
+	<AddRoundMenu {game} {shareId} on:roundAdded={handleRoundAddedAndToggleMenu} />
+{:else}
+	<SpeedDialTrigger class="absolute end-6 bottom-6" />
+	<SpeedDial pill={false} tooltip="none" textOutside>
+		<SpeedDialButton name="delete">
+			<!-- place a native button inside the component slot so clicks are handled reliably -->
+			<button type="button" class="p-1" onclick={onRoundDeleted}>
 				<CloseCircleSolid class="h-6 w-6" />
-			</SpeedDialButton>
-			<SpeedDialButton name="add" on:click={toggleAddRoundMenu}>
+			</button>
+		</SpeedDialButton>
+		<SpeedDialButton name="add">
+			<button type="button" class="p-1" onclick={toggleAddRoundMenu}>
 				<CirclePlusSolid class="h-6 w-6" />
-			</SpeedDialButton>
-			
-		</SpeedDial>
-	{/if}
-</main>
-
-<style scoped>
-	/* Custom CSS to make the button span full width */
-	.full-width-btn {
-		width: 100%;
-	}
-</style>
+			</button>
+		</SpeedDialButton>
+	</SpeedDial>
+{/if}

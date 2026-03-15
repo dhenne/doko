@@ -37,6 +37,7 @@
 
 	const updateOnlyValidPlayersPresent = () => {
 		isOnlyValidPlayersPresent = playerNameLengths.every((length) => length !== 0);
+		console.log('Player name lengths:', playerNameLengths, 'isOnlyValidPlayersPresent:', isOnlyValidPlayersPresent);
 	};
 
 	async function handleSubmit(event: Event) {

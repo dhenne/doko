@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     image: postgres:15.3-alpine
@@ -10,11 +9,12 @@ services:
       - '5432:5432'
     volumes: 
       - db:/var/lib/postgresql/data
+    network_mode: bridge
   traefik:
-    image: traefik:v2.10.4
+    image: traefik:3.6.8
     container_name: traefik
     command:
-      # - "--log.level=DEBUG"
+      - "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -27,7 +27,16 @@ services:
       - "./traefik-provider-dev.yml:/file-config.yml:ro"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      
+    network_mode: bridge
+  curl:
+    image: curlimages/curl:8.16.0
+    command:
+      - -L
+      - -v
+      - http://host.docker.internal:8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: bridge
 volumes:
   db:
     driver: local

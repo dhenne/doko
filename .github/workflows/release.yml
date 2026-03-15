@@ -28,9 +28,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-      - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: 22.2.0
+          version: 10
       - uses: imjasonh/setup-crane@v0.1
       - id: package
         run: |
@@ -38,8 +38,8 @@ jobs:
           set -euo pipefail
           VERSION=$(echo ${{ inputs.version }} | tr -d 'v')
           IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY}"
-          (cd doko-frontend; npm ci)
-          (cd doko-frontend; npm run build)  
+          (cd doko-frontend; pnpm ci)
+          (cd doko-frontend; pnpm run build)  
           (cd doko-backend; mvn versions:set -DnewVersion=$VERSION)
           (cd doko-backend; mvn -Pnative -Dpublish.enabled spring-boot:build-image)
           DIGEST="$(crane digest ${IMAGE_NAME}:${VERSION})"

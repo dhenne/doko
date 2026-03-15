@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
+        <version>3.5.11</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>de.vinode</groupId>
@@ -15,7 +15,7 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>21</java.version>
-        <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <publish.enabled>false</publish.enabled>
         <publish.username>${env.MAVEN_PUBLISH_USERNAME}</publish.username>
         <publish.password>${env.MAVEN_PUBLISH_PASSWORD}</publish.password>
@@ -64,6 +64,10 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -99,7 +103,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.13.0</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
@@ -155,11 +159,10 @@
                 <configuration>
                     <image>
                         <name>ghcr.io/dhenne/doko:${project.version}</name>
-                        <builder>paketobuildpacks/builder:tiny</builder>
+                        <builder>paketobuildpacks/builder-jammy-tiny</builder>
                         <publish>${publish.enabled}</publish>
                         <buildpacks>
-                            <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>
-                            <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>
+                            <buildpack>paketo-buildpacks/java-native-image</buildpack>
                         </buildpacks>
                         <env>
                             <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>

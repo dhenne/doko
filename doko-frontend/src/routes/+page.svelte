@@ -20,17 +20,14 @@
 		console.log('Loaded game:', game);
 	});
 
-	const onRoundAdded = async (e: CustomEvent<string>) => {
+	const onRoundAdded = async (roundUrl: string) => {
 		if (game === undefined) {
 			return;
-		}	
+		}
 
-		const addedRound : Round = await getRoundByUrl(e.detail);
+		const addedRound : Round = await getRoundByUrl(roundUrl);
 
-		game.rounds.push(addedRound);
-
-		const ix = game.rounds.length;
-		game.rounds[ix] = game.rounds[ix]; // make write visible for compiler
+		game = { ...game, rounds: [...game.rounds, addedRound] };
 	};
 
 	const onRoundDeleted = async () => {
@@ -38,13 +35,10 @@
 		if (shareId === null || lastRound === undefined) {
 			return
 		}
-		
+
 		const response = await deleteRound(shareId, lastRound);
 		if (response.status === 200 && game !== undefined) {
-			game.rounds.pop();
-
-			const ix = game.rounds.length;
-		    game.rounds[ix] = game.rounds[ix]; // make write visible for compiler
+			game = { ...game, rounds: game.rounds.slice(0, -1) };
 		}
 	};
 

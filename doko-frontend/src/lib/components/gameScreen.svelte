@@ -4,9 +4,9 @@
 	import { calculateRoundsSortedForDisplay } from '$lib/domain/service/gameCalculations';
 	import GameScreenRowContent from '$lib/components/gameScreenRowContent.svelte';
 
-	export let game: Game;
+	let { game = $bindable() } = $props<{ game: Game }>();
 
-	$: roundsSortedForDisplay = calculateRoundsSortedForDisplay(game);
+	let roundsSortedForDisplay = $derived(calculateRoundsSortedForDisplay(game));
 </script>
 
 <table class="table">

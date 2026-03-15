@@ -107,6 +107,29 @@ npx prettier --write .
 npx eslint .
 ```
 
+### Integration Tests (Playwright E2E)
+
+The `e2e/` directory contains full-stack Playwright tests that run against the live dev environment.
+
+**Prerequisites**: Docker Compose (PostgreSQL + Traefik), backend, and frontend must all be running.
+
+```bash
+cd e2e
+
+# Install dependencies and browser
+pnpm install
+pnpm exec playwright install chromium
+
+# Run tests
+pnpm test
+
+# Run tests with browser visible
+pnpm test:headed
+
+# Run tests with Playwright UI
+pnpm test:ui
+```
+
 ### Package Manager
 The frontend uses **pnpm** (not npm), as evidenced by `pnpm-lock.yaml` and `.npmrc`.
 

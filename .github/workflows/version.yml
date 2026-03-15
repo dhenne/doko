@@ -5,7 +5,10 @@ on:
     branches:
       - main
 permissions:
+  packages: write
   contents: write
+  attestations: write
+  id-token: write
 jobs:
   bump:
     runs-on: ubuntu-latest

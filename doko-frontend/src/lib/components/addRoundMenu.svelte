@@ -188,7 +188,7 @@
 					<div class="flex flex-col gap-0.5">
 						<span class="font-bold text-white text-sm">{player.name}</span>
 						{#if points[player.name] !== undefined}
-							<span class="text-xs font-bold {points[player.name] > 0 ? 'text-[#FE795D]' : points[player.name] < 0 ? 'text-red-400' : 'text-slate-500'}">
+							<span class="text-xs font-bold {points[player.name] > 0 ? 'text-emerald-400' : points[player.name] < 0 ? 'text-[#FE795D]' : 'text-slate-500'}">
 								{points[player.name] > 0 ? '+' : ''}{points[player.name]} pts
 							</span>
 						{/if}

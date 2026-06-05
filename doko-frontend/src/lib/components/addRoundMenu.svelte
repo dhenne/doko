@@ -4,6 +4,7 @@
 	import type { Points } from '$lib/adapter/backend';
 	import { postNewRoundForGame } from '$lib/adapter/backend';
 	import { mapToReOrContra } from '$lib/domain/reOrContra';
+	import { calculatePointsFromValue, calculateValueForParty } from '$lib/domain/points';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import { onMount, createEventDispatcher } from 'svelte';
 
@@ -43,54 +44,6 @@
 		if (response.status === 201) {
 			const locationUrl = response.headers.get("Location");
 			dispatch('roundAdded', locationUrl);
-		}
-	};
-
-	const calculatePointsFromValue = (value: number | undefined, reOrContra: ReOrContra) => {
-		if (value === undefined) {
-			console.log('no value given to calculate points from');
-			return 0;
-		}
-
-		const isReWinner = value > 120;
-		const winnerPoints = isReWinner ? 1 : 2;
-		const absoluteValue = Math.abs(value - 120);
-		const absagePoints = Math.max(
-			0,
-			Math.floor(absoluteValue / 30) - (absoluteValue % 30 == 0 ? 1 : 0)
-		);
-
-		let returnPoints = absagePoints + winnerPoints;
-
-		switch (reOrContra) {
-			case 'RE': {
-				return returnPoints * (isReWinner ? 1 : -1);
-			}
-			case 'CONTRA': {
-				return returnPoints * (isReWinner ? -1 : 1);
-			}
-			default: {
-				return 0;
-			}
-		}
-	};
-
-	const calculateValueForParty = (value: number | undefined, reOrContra: ReOrContra) => {
-		if (value === undefined) {
-			console.log('no value given to calculate points from');
-			return 0;
-		}
-
-		switch (reOrContra) {
-			case 'RE': {
-				return value;
-			}
-			case 'CONTRA': {
-				return 240 - value;
-			}
-			default: {
-				return 0;
-			}
 		}
 	};
 

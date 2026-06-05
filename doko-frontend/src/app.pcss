@@ -2,3 +2,70 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--bg-gradient: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 60%, #080810 100%);
+	--accent-gradient: linear-gradient(135deg, #FE795D 0%, #EB4F27 100%);
+	--accent-color: #FE795D;
+	--accent-color-hover: #EB4F27;
+}
+
+body {
+	background: var(--bg-gradient) no-repeat fixed;
+	background-size: cover;
+	min-height: 100vh;
+	font-family: 'Inter', -apple-system, sans-serif;
+	color: #e2e8f0;
+	-webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Outfit', sans-serif;
+}
+
+/* Custom styling for svelte-range-slider-pips */
+.rangeSlider {
+	--range-slider: rgba(255, 255, 255, 0.08) !important;
+	--range-handle: var(--accent-color) !important;
+	--range-handle-focus: var(--accent-color-hover) !important;
+	--range-handle-inactive: var(--accent-color) !important;
+	--range-range: var(--accent-color) !important;
+	--range-range-inactive: var(--accent-color) !important;
+	--range-pip: rgba(255, 255, 255, 0.15) !important;
+	--range-label: rgba(255, 255, 255, 0.6) !important;
+	background: transparent !important;
+	border: none !important;
+	font-size: 0.75rem !important;
+	margin: 10px 0 25px 0 !important;
+}
+
+.rangeSlider .rangeHandle {
+	border-radius: 50% !important;
+	box-shadow: 0 0 10px rgba(254, 121, 93, 0.4) !important;
+	transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.rangeSlider .rangeHandle:hover {
+	transform: scale(1.1) !important;
+	box-shadow: 0 0 15px rgba(254, 121, 93, 0.7) !important;
+}
+
+.rangeSlider .pipVal {
+	color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+::-webkit-scrollbar-track {
+	background: rgba(8, 8, 16, 0.5);
+}
+::-webkit-scrollbar-thumb {
+	background: rgba(254, 121, 93, 0.2);
+	border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(254, 121, 93, 0.4);
+}
